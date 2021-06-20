@@ -1,0 +1,7 @@
+# Sublime Text files
+*.sublime-project
+*.sublime-workspace
+
+# VSCode files/directories
+.vs
+*.code-workspace
