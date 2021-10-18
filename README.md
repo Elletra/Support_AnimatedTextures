@@ -51,7 +51,7 @@ If successful, it **returns the object.** If it fails to create an object, it **
 | -------- | ---- | ----------- |
 | className | class name | The class of object to create. **It must have an engine-defined `setSkinName()` method**, which is only found on descendants of the `ShapeBase` class. These are classes like `StaticShape`, `Player`, `Item`, `WheeledVehicle`, etc. |
 | data | data block | The data block that the shape will have. |
-| namePrefix | string | The prefix to all your frame texture names. For example, if you named your frames `frame000.YOUR_TEXTURE_NAME_HERE.png` and so on, you would put `frame` for this value. If you have the frames in a subfolder, you would include the subfolder: `subfolder/frame`.
+| namePrefix | string | The prefix to all your frame texture names. For example, if you named your frames `frame000.YOUR_TEXTURE_NAME_HERE.png` and so on, you would put `frame` for this value. If you have the frames in a subfolder from where the model is, you would include the subfolder: `folder/frame`.
 | numFrames | integer | The number of frames your animation has. |
 | fps | integer | The framerate you want your animation to have. |
 
@@ -283,13 +283,132 @@ As you may have realized, there are very logical reasons for all these values so
 
 ***
 
-### Example Usage ###
+### <a name="examples">Examples ###
+
+#### <a name="examples-basic-usage">Basic Usage ####
 
 ```js
-// First, you need to initialize the animation by adding the frames to the resource manager.
+// The static shape datablock
+datablock StaticShapeData (MyStaticShapeData)
+{
+	shapeFile = "Add-Ons/My_AddOn/MyShape.dts";
+};
+
+// First, you need to initialize the animation by adding the frames to the resource manager
 function initMyAddOn ()  // Just an example -- Don't actually name your function this.
 {
-	for (%i = 0; %i < 12; %i++)
+	//* Add frames to the resource manager *//
+
+	addExtraResource("Add-Ons/My_AddOn/frame000.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/frame001.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/frame002.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/frame003.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/frame004.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/frame005.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/frame006.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/frame007.myTexture.png");
+}
+
+// Make sure you call the function before the mission is created!
+initMyAddOn();
+
+// Here's an example function for the basic creation of a shape:
+function exampleFunction (%position)
+{
+	%shape = AnimTextures.createShape(StaticShape, MyDataBlock, "frame", 8, 60);
+
+	if ( isObject (%shape) )
+	{
+		%shape.setTransform(%position);
+	}
+
+	return %shape;
+}
+```
+
+##
+
+#### <a name="examples-frames-subfolder">Keeping the Frames in a Subfolder ####
+
+```js
+datablock StaticShapeData (MyStaticShapeData)
+{
+	// In this example, we keep our model in a folder named `assets`
+	shapeFile = "Add-Ons/My_AddOn/assets/MyShape.dts";
+};
+
+function initMyAddOn ()
+{
+	//* In this example, we keep our frames in a subfolder named `myFramesFolder`, which is a subfolder
+	//  from where the model is *//
+
+	addExtraResource("Add-Ons/My_AddOn/assets/myFramesFolder/frame000.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/assets/myFramesFolder/frame001.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/assets/myFramesFolder/frame002.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/assets/myFramesFolder/frame003.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/assets/myFramesFolder/frame004.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/assets/myFramesFolder/frame005.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/assets/myFramesFolder/frame006.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/assets/myFramesFolder/frame007.myTexture.png");
+}
+
+// ...
+
+function exampleFunction (%position)
+{
+	// Since we're keeping our frames in a subfolder named `myFramesFolder`, we need to include it
+	// in the name prefix
+	%shape = AnimTextures.createShape(StaticShape, MyDataBlock, "myFramesFolder/frame", 8, 60);
+
+	// ...
+}
+```
+
+##
+
+#### <a name="examples-different-prefix">Having a Name Prefix Other than `frame` ####
+
+You don't need to have all your frames prefixed with `frame###`. That's just a convention!
+
+You can prefix them with whatever, as long as they're numbered properly.
+
+```js
+function initMyAddOn ()
+{
+	//* In this example, we have our frames prefixed with `water` *//
+
+	addExtraResource("Add-Ons/My_AddOn/water000.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/water001.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/water002.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/water003.myTexture.png");
+	addExtraResource("Add-Ons/My_AddOn/water004.myTexture.png");
+}
+
+// ...
+
+function exampleFunction (%position)
+{
+	// In this example, we have our frames prefixed with `water`
+	%shape = AnimTextures.createShape(StaticShape, MyDataBlock, "water", 5, 60);
+
+	// ...
+}
+```
+
+##
+
+#### <a name="examples-add-frames-with-loop">Adding Frames with a Loop ####
+
+Calling `addExtraResource()` manually for each and every frame is not good.
+
+Here's a better way of adding them:
+
+```js
+function initMyAddOn ()
+{
+	%numFrames = 64;
+
+	for (%i = 0; %i < %numFrames; %i++)
 	{
 		%frame = %i;
 
@@ -308,21 +427,5 @@ function initMyAddOn ()  // Just an example -- Don't actually name your function
 		// Add frames to the resource manager
 		addExtraResource("Add-Ons/My_AddOn/frame" @ %frame @ ".myTexture.png");
 	}
-}
-
-// Make sure you call the function before the mission is created!
-initMyAddOn();
-
-// Here's an example function for the basic creation of a shape:
-function exampleFunction (%position)
-{
-	%shape = AnimTextures.createShape(StaticShape, MyDataBlock, "frame", 12, 60);
-
-	if ( isObject (%shape) )
-	{
-		%shape.setTransform(%position);
-	}
-
-	return %shape;
 }
 ```
