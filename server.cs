@@ -289,7 +289,7 @@ package Support_AnimatedTextures
 		return %this._anim_framePrefix;
 	}
 
-	function ShapeBase::getAnimCurrentFrame ( %this )
+	function ShapeBase::getAnimTexCurrFrame ( %this )
 	{
 		return %this._anim_currFrame;
 	}

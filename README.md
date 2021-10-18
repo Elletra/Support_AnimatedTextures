@@ -240,7 +240,7 @@ Gets the frame prefix of your shape's texture animation.
 
 ##
 
-#### <a name="api-get-anim-current-frame">`ShapeBase::getAnimCurrentFrame()`
+#### <a name="api-get-anim-tex-curr-frame">`ShapeBase::getAnimTexCurrFrame()`
 
 Gets the current frame your shape's texture animation is on.
 
