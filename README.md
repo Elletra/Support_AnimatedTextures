@@ -1,6 +1,6 @@
 # Animated Textures #
 
-This mod adds support for animated textures.
+This add-on adds support for animated textures.
 
 
 ## Using `Support_AnimatedTextures` ##
@@ -26,10 +26,10 @@ After this, put your model and your textures in the same folder.
 **You need to add your frames to the resource manager manually.** To do this, use the [extraResources](https://github.com/qoh/bl-lib/blob/master/extraResources.cs) script in your code:
 
 ```js
-addExtraResource("Add-Ons/AnimTexture_MyAddOn/assets/textures/frame000.YOUR_TEXTURE_NAME_HERE.png");
-addExtraResource("Add-Ons/AnimTexture_MyAddOn/assets/textures/frame001.YOUR_TEXTURE_NAME_HERE.png");
-addExtraResource("Add-Ons/AnimTexture_MyAddOn/assets/textures/frame002.YOUR_TEXTURE_NAME_HERE.png");
-addExtraResource("Add-Ons/AnimTexture_MyAddOn/assets/textures/frame003.YOUR_TEXTURE_NAME_HERE.png");
+addExtraResource("Add-Ons/My_AddOn/frame000.YOUR_TEXTURE_NAME_HERE.png");
+addExtraResource("Add-Ons/My_AddOn/frame001.YOUR_TEXTURE_NAME_HERE.png");
+addExtraResource("Add-Ons/My_AddOn/frame002.YOUR_TEXTURE_NAME_HERE.png");
+addExtraResource("Add-Ons/My_AddOn/frame003.YOUR_TEXTURE_NAME_HERE.png");
 // ...
 ```
 
@@ -231,3 +231,48 @@ Some functions return an `AnimTexturesError`, which will be one of the following
 | $AnimTextures::Error::MaxFrames | The number of frames specified is too high. |
 | $AnimTextures::Error::MinFPS | The framerate specified is too low. |
 | $AnimTextures::Error::MaxFPS | The framerate specified is too high. |
+
+
+### Example Usage ###
+
+```js
+// First, you need to initialize the animation by adding the frames to the resource manager.
+function initMyAddOn ()  // Just an example -- Don't actually name your function this.
+{
+	for (%i = 0; %i < 12; %i++)
+	{
+		%frame = %i;
+
+		//* Add trailing zeros *//
+
+		if (%i < 10)
+		{
+			%frame = "0" @ %frame;
+		}
+
+		if (%i < 100)
+		{
+			%frame = "0" @ %frame;
+		}
+
+		// Add frames to the resource manager
+		addExtraResource("Add-Ons/My_AddOn/frame" @ %frame @ ".myTexture.png");
+	}
+}
+
+// Make sure you call the function before the mission is created!
+initMyAddOn();
+
+// Here's an example function for the basic creation of a shape:
+function createMyShape (%position)  // Just an example -- Don't actually name your function this.
+{
+	%shape = AnimTextures.createShape(StaticShape, MyDataBlock, "frame", 12, 60);
+
+	if ( !isObject (%shape) )
+	{
+		%shape.setTransform(%position);
+	}
+
+	return %shape;
+}
+```

@@ -306,12 +306,12 @@ package Support_AnimatedTextures
 
 		%frame = %this.anim_currFrame;
 
-		if ( %frame < 100 )
+		if ( %frame < 10 )
 		{
 			%frame = "0" @ %frame;
 		}
 
-		if ( %frame < 10 )
+		if ( %frame < 100 )
 		{
 			%frame = "0" @ %frame;
 		}
