@@ -158,7 +158,7 @@ Checks whether a shape with the data specified can be added to the shape set.
 
 ##
 
-#### <a name="api-start-texture-anim">`ShapeBase::startTextureAnim()`
+#### <a name="api-anim-tex-start">`ShapeBase::animTex_start()`
 
 Starts a shape's texture animation, if it can.
 
@@ -166,23 +166,23 @@ Starts a shape's texture animation, if it can.
 
 ##
 
-#### <a name="api-stop-texture-anim">`ShapeBase::stopTextureAnim()`
+#### <a name="api-anim-tex-stop">`ShapeBase::animTex_stop()`
 
 Stops a shape's texture animation.
 
 ##
 
-#### <a name="api-check-can-anim-texture">`ShapeBase::checkCanAnimTexture()`
+#### <a name="api-anim-tex-check-can-start">`ShapeBase::animTex_checkCanStart()`
 
 Checks whether a shape's texture animation is valid.
 
-[`ShapeBase::startTextureAnim`](#api-start-texture-anim) already performs this check, so you don't need to call it beforehand.
+[`ShapeBase::animTex_start`](#api-anim-tex-start) already performs this check, so you don't need to call it beforehand.
 
 **Returns**  [`AnimTexturesError`](#api-error-handling).
 
 ##
 
-#### <a name="api-set-anim-texture-frames">`ShapeBase::setAnimTextureFrames(numFrames)`
+#### <a name="api-anim-tex-set-num-frames">`ShapeBase::animTex_setNumFrames(numFrames)`
 
 Sets the number of frames you want your shape's texture animation to have, if valid.
 
@@ -194,7 +194,7 @@ Sets the number of frames you want your shape's texture animation to have, if va
 
 ##
 
-#### <a name="api-set-anim-texture-fps">`ShapeBase::setAnimTextureFPS(fps)`
+#### <a name="api-anim-tex-set-fps">`ShapeBase::animTex_setFPS(fps)`
 
 Sets the framerate you want your shape's texture animation to have, if valid.
 
@@ -206,7 +206,7 @@ Sets the framerate you want your shape's texture animation to have, if valid.
 
 ##
 
-#### <a name="api-set-anim-texture-prefix">`ShapeBase::setAnimTexturePrefix(framePrefix)`
+#### <a name="api-anim-tex-set-prefix">`ShapeBase::animTex_setPrefix(framePrefix)`
 
 Sets the frame prefix you want your shape's texture animation to have.
 
@@ -216,7 +216,7 @@ Sets the frame prefix you want your shape's texture animation to have.
 
 ##
 
-#### <a name="api-get-anim-texture-frames">`ShapeBase::getAnimTextureFrames()`
+#### <a name="api-anim-tex-get-num-frames">`ShapeBase::animTex_getNumFrames()`
 
 Gets the number of frames your shape's texture animation has.
 
@@ -224,7 +224,7 @@ Gets the number of frames your shape's texture animation has.
 
 ##
 
-#### <a name="api-get-anim-texture-fps">`ShapeBase::getAnimTextureFPS()`
+#### <a name="api-anim-tex-get-fps">`ShapeBase::animTex_getFPS()`
 
 Gets the framerate of your shape's texture animation.
 
@@ -232,7 +232,7 @@ Gets the framerate of your shape's texture animation.
 
 ##
 
-#### <a name="api-get-anim-texture-prefix">`ShapeBase::getAnimTexturePrefix()`
+#### <a name="api-anim-tex-get-prefix">`ShapeBase::animTex_getPrefix()`
 
 Gets the frame prefix of your shape's texture animation.
 
@@ -240,7 +240,7 @@ Gets the frame prefix of your shape's texture animation.
 
 ##
 
-#### <a name="api-get-anim-tex-curr-frame">`ShapeBase::getAnimTexCurrFrame()`
+#### <a name="api-anim-tex-get-curr-frame">`ShapeBase::animTex_getCurrFrame()`
 
 Gets the current frame your shape's texture animation is on.
 

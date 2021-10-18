@@ -39,7 +39,7 @@ function AnimTextures::createShape ( %this, %className, %data, %framePrefix, %nu
 	MissionCleanup.add (%shape);
 	AnimTextures._animTexShapes.add (%shape);
 
-	%error = %shape.startTextureAnim ();
+	%error = %shape.animTex_start ();
 
 	if ( %error != $AnimTextures::Error::None )
 	{
@@ -65,14 +65,14 @@ function AnimTextures::addShape ( %this, %shape )
 		%this._animTexShapes.add (%shape);
 	}
 
-	return %shape.startTextureAnim ();
+	return %shape.animTex_start ();
 }
 
 function AnimTextures::removeShape ( %this, %shape )
 {
 	if ( %this.hasShape (%shape) )
 	{
-		%shape.stopTextureAnim ();
+		%shape.animTex_stop ();
 		%this._animTexShapes.remove (%shape);
 	}
 }
@@ -226,9 +226,9 @@ package Support_AnimatedTextures
 		}
 	}
 
-	function ShapeBase::startTextureAnim ( %this )
+	function ShapeBase::animTex_start ( %this )
 	{
-		%error = %this.checkCanAnimTexture ();
+		%error = %this.animTex_checkCanStart ();
 
 		if ( %error != $AnimTextures::Error::None )
 		{
@@ -240,12 +240,12 @@ package Support_AnimatedTextures
 		return $AnimTextures::Error::None;
 	}
 
-	function ShapeBase::stopTextureAnim ( %this )
+	function ShapeBase::animTex_stop ( %this )
 	{
-		cancel (%this.anim_loop);
+		cancel (%this._anim_loop);
 	}
 
-	function ShapeBase::setAnimTextureFrames ( %this, %numFrames )
+	function ShapeBase::animTex_setNumFrames ( %this, %numFrames )
 	{
 		%error = AnimTextures.validateNumFrames (%numFrames);
 
@@ -257,7 +257,7 @@ package Support_AnimatedTextures
 		return %error;
 	}
 
-	function ShapeBase::setAnimTextureFPS ( %this, %fps )
+	function ShapeBase::animTex_setFPS ( %this, %fps )
 	{
 		%error = AnimTextures.validateFPS (%fps);
 
@@ -269,32 +269,32 @@ package Support_AnimatedTextures
 		return %error;
 	}
 
-	function ShapeBase::setAnimTexturePrefix ( %this, %framePrefix )
+	function ShapeBase::animTex_setPrefix ( %this, %framePrefix )
 	{
 		%this._anim_framePrefix = %framePrefix;
 	}
 
-	function ShapeBase::getAnimTextureFrames ( %this )
+	function ShapeBase::animTex_getNumFrames ( %this )
 	{
 		return %this._anim_numFrames;
 	}
 
-	function ShapeBase::getAnimTextureFPS ( %this )
+	function ShapeBase::animTex_getFPS ( %this )
 	{
 		return %this._anim_fps;
 	}
 
-	function ShapeBase::getAnimTexturePrefix ( %this )
+	function ShapeBase::animTex_getPrefix ( %this )
 	{
 		return %this._anim_framePrefix;
 	}
 
-	function ShapeBase::getAnimTexCurrFrame ( %this )
+	function ShapeBase::animTex_getCurrFrame ( %this )
 	{
 		return %this._anim_currFrame;
 	}
 
-	function ShapeBase::checkCanAnimTexture ( %this )
+	function ShapeBase::animTex_checkCanStart ( %this )
 	{
 		%error = AnimTextures.validateNumFrames (%this._anim_numFrames);
 
@@ -314,7 +314,7 @@ package Support_AnimatedTextures
 	// Private method -- Do NOT call this!
 	function ShapeBase::_animTextureLoop ( %this )
 	{
-		cancel (%this.anim_loop);
+		cancel (%this._anim_loop);
 
 		%frame = %this._anim_currFrame;
 
@@ -336,7 +336,7 @@ package Support_AnimatedTextures
 			%this._anim_currFrame = 0;
 		}
 
-		%this.anim_loop = %this.schedule (1000 / %this._anim_fps, "_animTextureLoop");
+		%this._anim_loop = %this.schedule (1000 / %this._anim_fps, "_animTextureLoop");
 	}
 
 	function createMission ()
