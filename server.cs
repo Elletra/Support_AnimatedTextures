@@ -28,15 +28,14 @@ function AnimTextures::createShape ( %this, %className, %data, %namePrefix, %num
 	%shape = new (%className) ()
 	{
 		dataBlock = %data;
-		anim_currFrame = 0;
 		anim_namePrefix = %namePrefix;
+		anim_numFrames = %numFrames;
+		anim_fps = %fps;
+		anim_currFrame = 0;
 	};
 
 	MissionCleanup.add (%shape);
 	AnimTextures._animTexShapes.add (%shape);
-
-	%shape.anim_numFrames = %numFrames;
-	%shape.anim_fps = %fps;
 
 	%error = %shape.startTextureAnim ();
 
