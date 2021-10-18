@@ -1,12 +1,13 @@
 function AnimTextures::onAdd ( %this )
 {
-	%this.animTexShapes = new SimSet ();
+	// Use `addShape()`, `removeShape()`, and `hasShape()` -- Do NOT use this field directly!!
+	%this._animTexShapes = new SimSet ();
 }
 
 function AnimTextures::onRemove ( %this )
 {
-	%this.animTexShapes.deleteAll ();
-	%this.animTexShapes.delete ();
+	%this._animTexShapes.deleteAll ();
+	%this._animTexShapes.delete ();
 }
 
 function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps )
@@ -24,7 +25,7 @@ function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps
 	};
 
 	MissionCleanup.add (%shape);
-	AnimTextures.animTexShapes.add (%shape);
+	AnimTextures._animTexShapes.add (%shape);
 
 	%shape.anim_numFrames = %numFrames;
 	%shape.anim_fps = (%fps $= "" ? $AnimTextures::DefaultFPS : %fps); 
@@ -39,6 +40,37 @@ function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps
 	}
 
 	return %shape;
+}
+
+function AnimTextures::addShape ( %this, %shape )
+{
+	if ( !%this.hasShape (%shape) )
+	{
+		%error = %this.getAnimCreateError (%shape.anim_numFrames);
+
+		if ( %error != $AnimTextures::Error::None )
+		{
+			return %error;
+		}
+
+		%this._animTexShapes.add (%shape);
+	}
+
+	return %shape.startAnimTextureLoop ();
+}
+
+function AnimTextures::removeShape ( %this, %shape )
+{
+	if ( %this.hasShape (%shape) )
+	{
+		%shape.stopAnimTextureLoop ();
+		%this._animTexShapes.remove (%shape);
+	}
+}
+
+function AnimTextures::hasShape ( %this, %shape )
+{
+	return %this._animTexShapes.isMember (%shape);
 }
 
 function AnimTextures::getAnimLoopError ( %this, %numFrames )
@@ -58,7 +90,7 @@ function AnimTextures::getAnimLoopError ( %this, %numFrames )
 
 function AnimTextures::getAnimCreateError ( %this, %numFrames )
 {
-	if ( %this.animTexShapes.getCount () >= $AnimTextures::MaxShapes )
+	if ( %this._animTexShapes.getCount () >= $AnimTextures::MaxShapes )
 	{
 		return $AnimTextures::Error::ShapeLimit;
 	}
@@ -136,7 +168,7 @@ package Support_AnimatedTextures
 			return %error;
 		}
 
-		if ( !AnimTextures.animTexShapes.isMember (%this) )
+		if ( !AnimTextures._animTexShapes.isMember (%this) )
 		{
 			return $AnimTextures::Error::NotInSet;
 		}
@@ -151,7 +183,7 @@ package Support_AnimatedTextures
 		cancel (%this.anim_loop);
 	}
 
-	// Internal use only -- Do NOT call this.
+	// Internal use only -- Do NOT call this!
 	function StaticShape::_animTextureLoop ( %this )
 	{
 		cancel (%this.anim_loop);
