@@ -29,7 +29,14 @@ function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps
 	%shape.anim_numFrames = %numFrames;
 	%shape.anim_fps = (%fps $= "" ? $AnimTextures::DefaultFPS : %fps); 
 
-	%shape.startAnimTextureLoop ();
+	%error = %shape.startAnimTextureLoop ();
+
+	if ( %error != $AnimTextures::Error::None )
+	{
+		%shape.delete ();
+		%this.printError (%error);
+		return 0;
+	}
 
 	return %shape;
 }
@@ -64,27 +71,17 @@ function AnimTextures::printError ( %this, %error )
 	switch ( %error )
 	{
 		case $AnimTextures::Error::ShapeLimit:
-			error ("ERROR: Animated texture shape limit reached!");
+			error ("ERROR: Animated texture shape limit reached");
 
 		case $AnimTextures::Error::MinFrames:
 			error ("ERROR: Animated textures must have at least " @ $AnimTextures::MinFrames @ " frame(s)");
 
 		case $AnimTextures::Error::MaxFrames:
 			error ("ERROR: Animated textures cannot have more than " @ $AnimTextures::MaxFrames @ " frame(s)");
+
+		case $AnimTextures::Error::NotInSet:
+			error ("ERROR: Shape is not in animated texture set");
 	}
-}
-
-function AnimTextures::animLoopCheck ( %this, %numFrames )
-{
-	%error = %this.getAnimLoopError (%numFrames);
-
-	if ( %error != $AnimTextures::Error::None )
-	{
-		%this.printError (%error);
-		return false;
-	}
-
-	return true;
 }
 
 function AnimTextures::animCreateCheck ( %this, %numFrames )
@@ -122,6 +119,7 @@ package Support_AnimatedTextures
 		$AnimTextures::Error::ShapeLimit = 1;
 		$AnimTextures::Error::MinFrames = 2;
 		$AnimTextures::Error::MaxFrames = 3;
+		$AnimTextures::Error::NotInSet = 4;
 
 		if ( !isObject (AnimTextures) )
 		{
@@ -131,20 +129,21 @@ package Support_AnimatedTextures
 
 	function StaticShape::startAnimTextureLoop ( %this )
 	{
-		if ( !AnimTextures.animLoopCheck (%this.anim_numFrames) )
+		%error = AnimTextures.getAnimLoopError (%this.anim_numFrames);
+
+		if ( %error != $AnimTextures::Error::None )
 		{
-			return false;
+			return %error;
 		}
 
 		if ( !AnimTextures.animTexShapes.isMember (%this) )
 		{
-			error ("ERROR: Shape is not in animated texture set!");
-			return false;
+			return $AnimTextures::Error::NotInSet;
 		}
 
 		%this._animTextureLoop ();
 
-		return true;
+		return $AnimTextures::Error::None;
 	}
 
 	function StaticShape::stopAnimTextureLoop ( %this )
