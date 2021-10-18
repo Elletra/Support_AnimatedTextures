@@ -10,7 +10,7 @@ function AnimTextures::onRemove ( %this )
 	%this._animTexShapes.delete ();
 }
 
-function AnimTextures::createShape ( %this, %className, %data, %namePrefix, %numFrames, %fps )
+function AnimTextures::createShape ( %this, %className, %data, %framePrefix, %numFrames, %fps )
 {
 	if ( %className $= "" )
 	{
@@ -30,7 +30,7 @@ function AnimTextures::createShape ( %this, %className, %data, %namePrefix, %num
 		dataBlock = %data;
 
 		// These are all private -- Use their respective getters and setters to interact with them.
-		_anim_namePrefix = %namePrefix;
+		_anim_framePrefix = %framePrefix;
 		_anim_numFrames = %numFrames;
 		_anim_fps = %fps;
 		_anim_currFrame = 0;
@@ -269,9 +269,9 @@ package Support_AnimatedTextures
 		return %error;
 	}
 
-	function ShapeBase::setAnimTexturePrefix ( %this, %namePrefix )
+	function ShapeBase::setAnimTexturePrefix ( %this, %framePrefix )
 	{
-		%this._anim_namePrefix = %namePrefix;
+		%this._anim_framePrefix = %framePrefix;
 	}
 
 	function ShapeBase::getAnimTextureFrames ( %this )
@@ -286,7 +286,7 @@ package Support_AnimatedTextures
 
 	function ShapeBase::getAnimTexturePrefix ( %this )
 	{
-		return %this._anim_namePrefix;
+		return %this._anim_framePrefix;
 	}
 
 	function ShapeBase::getAnimCurrentFrame ( %this )
@@ -328,7 +328,7 @@ package Support_AnimatedTextures
 			%frame = "0" @ %frame;
 		}
 
-		%this.setSkinName (%this._anim_namePrefix @ %frame);
+		%this.setSkinName (%this._anim_framePrefix @ %frame);
 		%this._anim_currFrame++;
 
 		if ( %this._anim_currFrame >= %this._anim_numFrames )

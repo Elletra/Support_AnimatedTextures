@@ -41,7 +41,7 @@ Next step is using the API...
 
 ### <a name="api"></a>API ###
 
-#### <a name="api-create-shape">`AnimTextures.createShape(className, data, namePrefix, numFrames, fps)` ####
+#### <a name="api-create-shape">`AnimTextures.createShape(className, data, framePrefix, numFrames, fps)` ####
 
 Creates an object with an animated texture. The animation will start automatically.
 
@@ -51,7 +51,7 @@ If successful, it **returns the object.** If it fails to create an object, it **
 | -------- | ---- | ----------- |
 | className | class name | The class of object to create. **It must have an engine-defined `setSkinName()` method**, which is only found on descendants of the `ShapeBase` class. These are classes like `StaticShape`, `Player`, `Item`, `WheeledVehicle`, etc. |
 | data | data block | The data block that the shape will have. |
-| namePrefix | string | The prefix to all your frame texture names. For example, if you named your frames `frame000.YOUR_TEXTURE_NAME_HERE.png` and so on, you would put `frame` for this value. If you have the frames in a subfolder from where the model is, you would include the subfolder: `folder/frame`.
+| framePrefix | string | The prefix to all your frame texture names. For example, if you named your frames `frame000.YOUR_TEXTURE_NAME_HERE.png` and so on, you would put `frame` for this value. If you have the frames in a subfolder from where the model is, you would include the subfolder: `folder/frame`.
 | numFrames | integer | The number of frames your animation has. |
 | fps | integer | The framerate you want your animation to have. |
 
@@ -206,13 +206,13 @@ Sets the framerate you want your shape's texture animation to have, if valid.
 
 ##
 
-#### <a name="api-set-anim-texture-prefix">`ShapeBase::setAnimTexturePrefix(namePrefix)`
+#### <a name="api-set-anim-texture-prefix">`ShapeBase::setAnimTexturePrefix(framePrefix)`
 
-Sets the name prefix you want your shape's texture animation to have.
+Sets the frame prefix you want your shape's texture animation to have.
 
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
-| namePrefix | string | The name prefix you want your texture animation to have. |
+| framePrefix | string | The frame prefix you want your texture animation to have. |
 
 ##
 
@@ -234,7 +234,7 @@ Gets the framerate of your shape's texture animation.
 
 #### <a name="api-get-anim-texture-prefix">`ShapeBase::getAnimTexturePrefix()`
 
-Gets the name prefix of your shape's texture animation.
+Gets the frame prefix of your shape's texture animation.
 
 **Returns** `string`.
 
@@ -357,7 +357,7 @@ function initMyAddOn ()
 function exampleFunction (%position)
 {
 	// Since we're keeping our frames in a subfolder named `myFramesFolder`, we need to include it
-	// in the name prefix
+	// in the frame prefix
 	%shape = AnimTextures.createShape(StaticShape, MyDataBlock, "myFramesFolder/frame", 8, 60);
 
 	// ...
@@ -366,7 +366,7 @@ function exampleFunction (%position)
 
 ##
 
-#### <a name="examples-different-prefix">Having a Name Prefix Other than `frame` ####
+#### <a name="examples-different-prefix">Having a Frame Prefix Other than `frame` ####
 
 You don't need to have all your frames prefixed with `frame###`. That's just a convention!
 
