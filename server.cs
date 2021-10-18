@@ -133,7 +133,7 @@ function AnimTextures::printError ( %this, %error )
 			error ("ERROR: The data block specified does not exist");
 
 		case $AnimTextures::Error::ShapeLimit:
-			error ("ERROR: Animated texture shape limit reached");
+			error ("ERROR: Cannot have more than " @ $AnimTextures::MaxShapes @ " shape(s) with animated textures");
 
 		case $AnimTextures::Error::NotInSet:
 			error ("ERROR: Shape is not in animated texture set");
