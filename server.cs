@@ -12,7 +12,7 @@ function AnimTextures::onRemove ( %this )
 
 function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps )
 {
-	if ( !%this.animCreateCheck (%numFrames) )
+	if ( !%this._createShapeCheck (%numFrames) )
 	{
 		return 0;
 	}
@@ -46,7 +46,7 @@ function AnimTextures::addShape ( %this, %shape )
 {
 	if ( !%this.hasShape (%shape) )
 	{
-		%error = %this.getAnimCreateError (%shape.anim_numFrames);
+		%error = %this._getCreateShapeError (%shape.anim_numFrames);
 
 		if ( %error != $AnimTextures::Error::None )
 		{
@@ -73,7 +73,7 @@ function AnimTextures::hasShape ( %this, %shape )
 	return %this._animTexShapes.isMember (%shape);
 }
 
-function AnimTextures::getAnimLoopError ( %this, %numFrames )
+function AnimTextures::getNumFramesError ( %this, %numFrames )
 {
 	if ( %numFrames $= "" || %numFrames < $AnimTextures::MinFrames )
 	{
@@ -86,16 +86,6 @@ function AnimTextures::getAnimLoopError ( %this, %numFrames )
 	}
 
 	return $AnimTextures::Error::None;
-}
-
-function AnimTextures::getAnimCreateError ( %this, %numFrames )
-{
-	if ( %this._animTexShapes.getCount () >= $AnimTextures::MaxShapes )
-	{
-		return $AnimTextures::Error::ShapeLimit;
-	}
-
-	return %this.getAnimLoopError (%numFrames);
 }
 
 function AnimTextures::printError ( %this, %error )
@@ -116,9 +106,26 @@ function AnimTextures::printError ( %this, %error )
 	}
 }
 
-function AnimTextures::animCreateCheck ( %this, %numFrames )
+/////////////////////////
+//   Private methods   //
+// ------------------- //
+//   Don't use these.  //
+// ------------------- //
+/////////////////////////
+
+function AnimTextures::_getCreateShapeError ( %this, %numFrames )
 {
-	%error = %this.getAnimCreateError (%numFrames);
+	if ( %this._animTexShapes.getCount () >= $AnimTextures::MaxShapes )
+	{
+		return $AnimTextures::Error::ShapeLimit;
+	}
+
+	return %this.getNumFramesError (%numFrames);
+}
+
+function AnimTextures::_createShapeCheck ( %this, %numFrames )
+{
+	%error = %this._getCreateShapeError (%numFrames);
 
 	if ( %error != $AnimTextures::Error::None )
 	{
@@ -161,16 +168,11 @@ package Support_AnimatedTextures
 
 	function StaticShape::startAnimTextureLoop ( %this )
 	{
-		%error = AnimTextures.getAnimLoopError (%this.anim_numFrames);
+		%error = %this.getAnimTextureError ();
 
 		if ( %error != $AnimTextures::Error::None )
 		{
 			return %error;
-		}
-
-		if ( !AnimTextures._animTexShapes.isMember (%this) )
-		{
-			return $AnimTextures::Error::NotInSet;
 		}
 
 		%this._animTextureLoop ();
@@ -181,6 +183,23 @@ package Support_AnimatedTextures
 	function StaticShape::stopAnimTextureLoop ( %this )
 	{
 		cancel (%this.anim_loop);
+	}
+
+	function StaticShape::getAnimTextureError ( %this )
+	{
+		%error = AnimTextures.getNumFramesError (%this.anim_numFrames);
+
+		if ( %error != $AnimTextures::Error::None )
+		{
+			return %error;
+		}
+
+		if ( !AnimTextures.hasShape (%this) )
+		{
+			return $AnimTextures::Error::NotInSet;
+		}
+
+		return $AnimTextures::Error::None;
 	}
 
 	// Internal use only -- Do NOT call this!
