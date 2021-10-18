@@ -105,6 +105,12 @@ package Support_AnimatedTextures
 	// We package custom functions so they disappear once the server closes/restarts.
 	function AnimTextures_init ()
 	{
+		// !!! THESE VARIABLES ARE CONSTANTS !!!
+		//
+		// They are NOT prefs!!
+		//
+		// Do NOT change these.
+
 		$AnimTextures::Version = 1;
 
 		$AnimTextures::MaxShapes = 100;
