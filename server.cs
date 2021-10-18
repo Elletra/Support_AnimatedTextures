@@ -294,14 +294,6 @@ package Support_AnimatedTextures
 	{
 		cancel (%this.anim_loop);
 
-		%fps = %this.anim_fps;
-		%numFrames = %this.anim_numFrames;
-
-		if ( %fps $= "" || %numFrames $= "" || %fps <= 0 || %numFrames <= 0 )
-		{
-			return;
-		}
-
 		%frame = %this.anim_currFrame;
 
 		if ( %frame < 10 )
@@ -317,7 +309,7 @@ package Support_AnimatedTextures
 		%this.setSkinName (%this.anim_namePrefix @ %frame);
 		%this.anim_currFrame++;
 
-		if ( %this.anim_currFrame >= %numFrames )
+		if ( %this.anim_currFrame >= %this.anim_numFrames )
 		{
 			%this.anim_currFrame = 0;
 		}
