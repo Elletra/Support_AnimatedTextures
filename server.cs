@@ -121,6 +121,36 @@ function AnimTextures::validateFPS ( %this, %fps )
 	return $AnimTextures::Error::None;
 }
 
+function AnimTextures::printError ( %this, %error )
+{
+	switch ( %error )
+	{
+		case $AnimTextures::Error::ClassName:
+			error ("ERROR: The class name specified does not support texture skins");
+
+		case $AnimTextures::Error::DataBlock:
+			error ("ERROR: The data block specified does not exist");
+
+		case $AnimTextures::Error::ShapeLimit:
+			error ("ERROR: Animated texture shape limit reached");
+
+		case $AnimTextures::Error::NotInSet:
+			error ("ERROR: Shape is not in animated texture set");
+
+		case $AnimTextures::Error::MinFrames:
+			error ("ERROR: Animated textures must have at least " @ $AnimTextures::MinFrames @ " frame(s)");
+
+		case $AnimTextures::Error::MaxFrames:
+			error ("ERROR: Animated textures cannot have more than " @ $AnimTextures::MaxFrames @ " frame(s)");
+
+		case $AnimTextures::Error::MinFPS:
+			error ("ERROR: Animated textures must have a framerate of at least " @ $AnimTextures::MinFPS);
+
+		case $AnimTextures::Error::MaxFPS:
+			error ("ERROR: Animated textures cannot have a higher framerate than " @ $AnimTextures::MaxFPS);
+	}
+}
+
 function AnimTextures::checkCanCreateShape ( %this, %className, %data, %numFrames, %fps )
 {
 	%error = %this.checkCanAddShape (%className, %numFrames, %fps);
@@ -155,35 +185,8 @@ function AnimTextures::checkCanAddShape ( %this, %className, %numFrames, %fps )
 	return %this.validateFPS (%fps);
 }
 
-function AnimTextures::printError ( %this, %error )
-{
-	switch ( %error )
-	{
-		case $AnimTextures::Error::ClassName:
-			error ("ERROR: The class name specified does not support texture skins");
+// ----------------------------------------------------------------
 
-		case $AnimTextures::Error::DataBlock:
-			error ("ERROR: The data block specified does not exist");
-
-		case $AnimTextures::Error::ShapeLimit:
-			error ("ERROR: Animated texture shape limit reached");
-
-		case $AnimTextures::Error::NotInSet:
-			error ("ERROR: Shape is not in animated texture set");
-
-		case $AnimTextures::Error::MinFrames:
-			error ("ERROR: Animated textures must have at least " @ $AnimTextures::MinFrames @ " frame(s)");
-
-		case $AnimTextures::Error::MaxFrames:
-			error ("ERROR: Animated textures cannot have more than " @ $AnimTextures::MaxFrames @ " frame(s)");
-
-		case $AnimTextures::Error::MinFPS:
-			error ("ERROR: Animated textures must have a framerate of at least " @ $AnimTextures::MinFPS);
-
-		case $AnimTextures::Error::MaxFPS:
-			error ("ERROR: Animated textures cannot have a higher framerate than " @ $AnimTextures::MaxFPS);
-	}
-}
 
 package Support_AnimatedTextures
 {
@@ -288,7 +291,7 @@ package Support_AnimatedTextures
 		return $AnimTextures::Error::None;
 	}
 
-	// Internal use only -- Do NOT call this!
+	// Private method -- Do NOT call this!
 	function ShapeBase::_animTextureLoop ( %this )
 	{
 		cancel (%this.anim_loop);
