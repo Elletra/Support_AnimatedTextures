@@ -214,6 +214,38 @@ Sets the name prefix you want your shape's texture animation to have.
 | -------- | ---- | ----------- |
 | namePrefix | string | The name prefix you want your texture animation to have. |
 
+##
+
+#### <a name="api-get-anim-texture-frames">`ShapeBase::getAnimTextureFrames()`
+
+Gets the number of frames your shape's texture animation has.
+
+**Returns** `integer`.
+
+##
+
+#### <a name="api-get-anim-texture-fps">`ShapeBase::getAnimTextureFPS()`
+
+Gets the framerate of your shape's texture animation.
+
+**Returns** `integer`.
+
+##
+
+#### <a name="api-get-anim-texture-prefix">`ShapeBase::getAnimTexturePrefix()`
+
+Gets the name prefix of your shape's texture animation.
+
+**Returns** `string`.
+
+##
+
+#### <a name="api-get-anim-current-frame">`ShapeBase::getAnimCurrentFrame()`
+
+Gets the current frame your shape's texture animation is on.
+
+**Returns** `integer`.
+
 ***
 
 #### <a name="api-error-handling">Error Handling ####
@@ -232,6 +264,24 @@ Some functions return an `AnimTexturesError`, which will be one of the following
 | $AnimTextures::Error::MinFPS | The framerate specified is too low. |
 | $AnimTextures::Error::MaxFPS | The framerate specified is too high. |
 
+***
+
+#### <a name="api-constants">Constants ####
+
+There are some constants available for this add-on. You may use them, but ***do not change these under any circumstances.***
+
+| Variable | Value | Description |
+| -------- | ----- | ----------- |
+| $AnimTextures::Version | 1 | The version of the add-on that is installed. |
+| $AnimTextures::MaxShapes | 200 | The maximum number of shapes with animated textures that are allowed. After about 200, things start to glitch out. |
+| $AnimTextures::MinFrames | 1 | The minimum number of frames an animation can have. |
+| $AnimTextures::MaxFrames | 1000 | The maximum number of frames an animation can have. |
+| $AnimTextures::MinFPS | 1 | The lowest framerate an animation can have. |
+| $AnimTextures::MaxFPS | 1000 | The highest framerate an animation can have. |
+
+As you may have realized, there are very logical reasons for all these values so ***you should not change them.***
+
+***
 
 ### Example Usage ###
 
@@ -243,7 +293,7 @@ function initMyAddOn ()  // Just an example -- Don't actually name your function
 	{
 		%frame = %i;
 
-		//* Add trailing zeros *//
+		//* Add leading zeros *//
 
 		if (%i < 10)
 		{
@@ -264,11 +314,11 @@ function initMyAddOn ()  // Just an example -- Don't actually name your function
 initMyAddOn();
 
 // Here's an example function for the basic creation of a shape:
-function createMyShape (%position)  // Just an example -- Don't actually name your function this.
+function exampleFunction (%position)
 {
 	%shape = AnimTextures.createShape(StaticShape, MyDataBlock, "frame", 12, 60);
 
-	if ( !isObject (%shape) )
+	if ( isObject (%shape) )
 	{
 		%shape.setTransform(%position);
 	}
