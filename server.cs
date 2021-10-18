@@ -33,7 +33,7 @@ function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps
 	%shape.anim_numFrames = %numFrames;
 	%shape.anim_fps = (%fps $= "" ? $AnimTextures::DefaultFPS : %fps); 
 
-	%error = %shape.startAnimTextureLoop ();
+	%error = %shape.startTextureAnim ();
 
 	if ( %error != $AnimTextures::Error::None )
 	{
@@ -59,14 +59,14 @@ function AnimTextures::addShape ( %this, %shape )
 		%this._animTexShapes.add (%shape);
 	}
 
-	return %shape.startAnimTextureLoop ();
+	return %shape.startTextureAnim ();
 }
 
 function AnimTextures::removeShape ( %this, %shape )
 {
 	if ( %this.hasShape (%shape) )
 	{
-		%shape.stopAnimTextureLoop ();
+		%shape.stopTextureAnim ();
 		%this._animTexShapes.remove (%shape);
 	}
 }
@@ -91,7 +91,7 @@ function AnimTextures::validateNumFrames ( %this, %numFrames )
 	return $AnimTextures::Error::None;
 }
 
-function AnimTextures::validateFramerate ( %this, %fps )
+function AnimTextures::validateFPS ( %this, %fps )
 {
 	if ( %fps $= "" || %fps < $AnimTextures::MinFPS )
 	{
@@ -120,7 +120,7 @@ function AnimTextures::checkCanCreateShape ( %this, %numFrames, %fps )
 		return %error;
 	}
 
-	return %this.validateFramerate (%fps);
+	return %this.validateFPS (%fps);
 }
 
 function AnimTextures::printError ( %this, %error )
@@ -181,9 +181,9 @@ package Support_AnimatedTextures
 		}
 	}
 
-	function StaticShape::startAnimTextureLoop ( %this )
+	function StaticShape::startTextureAnim ( %this )
 	{
-		%error = %this.checkCanAnimate ();
+		%error = %this.checkCanAnimTexture ();
 
 		if ( %error != $AnimTextures::Error::None )
 		{
@@ -195,7 +195,7 @@ package Support_AnimatedTextures
 		return $AnimTextures::Error::None;
 	}
 
-	function StaticShape::stopAnimTextureLoop ( %this )
+	function StaticShape::stopTextureAnim ( %this )
 	{
 		cancel (%this.anim_loop);
 	}
@@ -214,7 +214,7 @@ package Support_AnimatedTextures
 
 	function StaticShape::setAnimTextureFPS ( %this, %fps )
 	{
-		%error = AnimTextures.validateFramerate (%fps);
+		%error = AnimTextures.validateFPS (%fps);
 
 		if ( %error == $AnimTextures::Error::None )
 		{
@@ -229,7 +229,7 @@ package Support_AnimatedTextures
 		%this.anim_namePrefix = %namePrefix;
 	}
 
-	function StaticShape::checkCanAnimate ( %this )
+	function StaticShape::checkCanAnimTexture ( %this )
 	{
 		%error = AnimTextures.validateNumFrames (%this.anim_numFrames);
 
