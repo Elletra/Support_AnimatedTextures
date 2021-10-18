@@ -11,7 +11,7 @@ function AnimTextures::onRemove ( %this )
 
 function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps )
 {
-	if ( !%this.animLoopCheck (%numFrames) )
+	if ( !%this.animCreateCheck (%numFrames) )
 	{
 		return 0;
 	}
@@ -22,7 +22,9 @@ function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps
 		anim_currFrame = 0;
 		anim_namePrefix = %namePrefix;
 	};
+
 	MissionCleanup.add (%shape);
+	AnimTextures.animTexShapes.add (%shape);
 
 	%shape.anim_numFrames = %numFrames;
 	%shape.anim_fps = (%fps $= "" ? $AnimTextures::DefaultFPS : %fps); 
@@ -34,11 +36,6 @@ function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps
 
 function AnimTextures::getAnimLoopError ( %this, %numFrames )
 {
-	if ( %this.animTexShapes.getCount () >= $AnimTextures::MaxShapes )
-	{
-		return $AnimTextures::Error::ShapeLimit;
-	}
-
 	if ( %numFrames $= "" || %numFrames < $AnimTextures::MinFrames )
 	{
 		return $AnimTextures::Error::MinFrames;
@@ -50,6 +47,16 @@ function AnimTextures::getAnimLoopError ( %this, %numFrames )
 	}
 
 	return $AnimTextures::Error::None;
+}
+
+function AnimTextures::getAnimCreateError ( %this, %numFrames )
+{
+	if ( %this.animTexShapes.getCount () >= $AnimTextures::MaxShapes )
+	{
+		return $AnimTextures::Error::ShapeLimit;
+	}
+
+	return %this.getAnimLoopError (%numFrames);
 }
 
 function AnimTextures::printError ( %this, %error )
@@ -70,6 +77,19 @@ function AnimTextures::printError ( %this, %error )
 function AnimTextures::animLoopCheck ( %this, %numFrames )
 {
 	%error = %this.getAnimLoopError (%numFrames);
+
+	if ( %error != $AnimTextures::Error::None )
+	{
+		%this.printError (%error);
+		return false;
+	}
+
+	return true;
+}
+
+function AnimTextures::animCreateCheck ( %this, %numFrames )
+{
+	%error = %this.getAnimCreateError (%numFrames);
 
 	if ( %error != $AnimTextures::Error::None )
 	{
@@ -110,7 +130,12 @@ package Support_AnimatedTextures
 			return false;
 		}
 
-		AnimTextures.animTexShapes.add (%this);
+		if ( !AnimTextures.animTexShapes.isMember (%this) )
+		{
+			error ("ERROR: Shape is not in animated texture set!");
+			return false;
+		}
+
 		%this.animTextureLoop ();
 
 		return true;
@@ -119,7 +144,6 @@ package Support_AnimatedTextures
 	function StaticShape::stopAnimTextureLoop ( %this )
 	{
 		cancel (%this.anim_loop);
-		AnimTextures.animTexShapes.remove (%this);
 	}
 
 	function StaticShape::animTextureLoop ( %this )
