@@ -200,6 +200,35 @@ package Support_AnimatedTextures
 		cancel (%this.anim_loop);
 	}
 
+	function StaticShape::setAnimTextureFrames ( %this, %numFrames )
+	{
+		%error = AnimTextures.validateNumFrames (%numFrames);
+
+		if ( %error == $AnimTextures::Error::None )
+		{
+			%this.anim_numFrames = %numFrames;
+		}
+
+		return %error;
+	}
+
+	function StaticShape::setAnimTextureFPS ( %this, %fps )
+	{
+		%error = AnimTextures.validateFramerate (%fps);
+
+		if ( %error == $AnimTextures::Error::None )
+		{
+			%this.anim_fps = %fps;
+		}
+
+		return %error;
+	}
+
+	function StaticShape::setAnimTexturePrefix ( %this, %namePrefix )
+	{
+		%this.anim_namePrefix = %namePrefix;
+	}
+
 	function StaticShape::checkCanAnimate ( %this )
 	{
 		%error = AnimTextures.validateNumFrames (%this.anim_numFrames);
