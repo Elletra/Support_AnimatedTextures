@@ -41,15 +41,16 @@ Next step is using the API...
 
 ### <a name="api"></a>API ###
 
-#### <a name="api-create-shape">`AnimTextures.createShape(data, namePrefix, numFrames, fps)` ####
+#### <a name="api-create-shape">`AnimTextures.createShape(className, data, namePrefix, numFrames, fps)` ####
 
-Creates a `StaticShape` with an animated texture. The animation will start automatically.
+Creates an object with an animated texture. The animation will start automatically.
 
-If successful, it **returns the shape.** If it fails to create a shape, it **returns `0`** and prints an error.
+If successful, it **returns the object.** If it fails to create an object, it **returns `0`** and prints an error.
 
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
-| data | `StaticShapeData` | The datablock that the shape will have. |
+| className | class name | The class of object to create. **It must have an engine-defined `setSkinName()` method**, which is only found on descendants of the `ShapeBase` class. These are classes like `StaticShape`, `Player`, `Item`, `WheeledVehicle`, etc. |
+| data | data block | The data block that the shape will have. |
 | namePrefix | string | The prefix to all your frame texture names. For example, if you named your frames `frame000.YOUR_TEXTURE_NAME_HERE.png` and so on, you would put `frame` for this value. If you have the frames in a subfolder, you would include the subfolder: `subfolder/frame`.
 | numFrames | integer | The number of frames your animation has. |
 | fps | integer | The framerate you want your animation to have. |
@@ -58,35 +59,35 @@ If successful, it **returns the shape.** If it fails to create a shape, it **ret
 
 #### <a name="api-add-shape">`AnimTextures.addShape(shape)` ####
 
-Adds a shape to the static shape set.
+Adds a shape to the shape set.
 
 **Returns**  [`AnimTexturesError`](#api-error-handling).
 
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
-| shape | `StaticShape` | The static shape to add to the shape set |
+| shape | `ShapeBase` | The object to add to the shape set |
 
 ##
 
 #### <a name="api-remove-shape">`AnimTextures.removeShape(shape)` ####
 
-Removes a shape from static shape set and stops its animation.
+Removes a shape from shape set and stops its animation.
 
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
-| shape | `StaticShape` | The static shape to remove from the shape set |
+| shape | `ShapeBase` | The shape to remove from the shape set |
 
 ##
 
 #### <a name="api-has-shape">`AnimTextures.hasShape(shape)` ####
 
-Checks whether a shape is in the static shape set.
+Checks whether a shape is in the shape set.
 
 **Returns** `boolean`.
 
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
-| shape | `StaticShape` | The static shape to add to the shape set |
+| shape | `ShapeBase` | The shape to add to the shape set |
 
 ##
 
@@ -114,18 +115,6 @@ Validates the framerate your animation has.
 
 ##
 
-#### <a name="api-check-can-create-shape">`AnimTextures.checkCanCreateShape(numFrames)` ####
-
-Checks whether a static shape with an animated texture can be created.
-
-**Returns**  [`AnimTexturesError`](#api-error-handling).
-
-| Argument | Type | Description |
-| -------- | ---- | ----------- |
-| numFrames | integer | The number of frames your animation has. |
-
-##
-
 #### <a name="api-print-error">`AnimTextures.printError(error)` ####
 
 Prints an error message based on the error passed in.
@@ -136,31 +125,66 @@ Prints an error message based on the error passed in.
 
 ##
 
-#### <a name="api-check-can-anim-texture">`StaticShape::checkCanAnimTexture()`
+#### <a name="api-check-can-create-shape">`AnimTextures.checkCanCreateShape(className, data, numFrames, fps)` ####
 
-Checks whether a static shape's texture animation is valid.
+Checks whether a shape with the data specified can be created.
+
+[`AnimTextures::createShape`](#api-create-shape) already performs this check, so you don't have to call it beforehand. However, [`AnimTextures::createShape`](#api-create-shape) does print an error if the check fails, so if you don't want that to happen, you'll have to perform the check before calling it.
+
+**Returns**  [`AnimTexturesError`](#api-error-handling).
+
+| Argument | Type | Description |
+| -------- | ---- | ----------- |
+| className | class name | The class of object you want to create. **It must have an engine-defined `setSkinName()` method**, which is only found on descendants of the `ShapeBase` class. These are classes like `StaticShape`, `Player`, `Item`, `WheeledVehicle`, etc. |
+| data | data block | The data block you want your shape to have. |
+| numFrames | integer | The number of frames your animation has. |
+| fps | integer | The framerate you want your animation to have. |
+
+##
+
+#### <a name="api-check-can-add-shape">`AnimTextures.checkCanAddShape(className, numFrames, fps)` ####
+
+Checks whether a shape with the data specified can be added to the shape set.
+
+[`AnimTextures::addShape`](#api-add-shape) already performs this check, so you don't need to call it beforehand.
+
+**Returns**  [`AnimTexturesError`](#api-error-handling).
+
+| Argument | Type | Description |
+| -------- | ---- | ----------- |
+| className | class name | The class of object you want to create. **It must have an engine-defined `setSkinName()` method**, which is only found on descendants of the `ShapeBase` class. These are classes like `StaticShape`, `Player`, `Item`, `WheeledVehicle`, etc. |
+| numFrames | integer | The number of frames your animation has. |
+| fps | integer | The framerate you want your animation to have. |
+
+##
+
+#### <a name="api-start-texture-anim">`ShapeBase::startTextureAnim()`
+
+Starts a shape's texture animation, if it can.
 
 **Returns**  [`AnimTexturesError`](#api-error-handling).
 
 ##
 
-#### <a name="api-start-texture-anim">`StaticShape::startTextureAnim()`
+#### <a name="api-stop-texture-anim">`ShapeBase::stopTextureAnim()`
 
-Starts a static shape's texture animation.
+Stops a shape's texture animation.
+
+##
+
+#### <a name="api-check-can-anim-texture">`ShapeBase::checkCanAnimTexture()`
+
+Checks whether a shape's texture animation is valid.
+
+[`ShapeBase::startTextureAnim`](#api-start-texture-anim) already performs this check, so you don't need to call it beforehand.
 
 **Returns**  [`AnimTexturesError`](#api-error-handling).
 
 ##
 
-#### <a name="api-stop-texture-anim">`StaticShape::stopTextureAnim()`
+#### <a name="api-set-anim-texture-frames">`ShapeBase::setAnimTextureFrames(numFrames)`
 
-Stops a static shape's texture animation.
-
-##
-
-#### <a name="api-set-anim-texture-frames">`StaticShape::setAnimTextureFrames(numFrames)`
-
-Sets the number of frames you want your static shape's texture animation to have, if valid.
+Sets the number of frames you want your shape's texture animation to have, if valid.
 
 **Returns**  [`AnimTexturesError`](#api-error-handling).
 
@@ -170,9 +194,9 @@ Sets the number of frames you want your static shape's texture animation to have
 
 ##
 
-#### <a name="api-set-anim-texture-fps">`StaticShape::setAnimTextureFPS(fps)`
+#### <a name="api-set-anim-texture-fps">`ShapeBase::setAnimTextureFPS(fps)`
 
-Sets the framerate you want your static shape's texture animation to have, if valid.
+Sets the framerate you want your shape's texture animation to have, if valid.
 
 **Returns**  [`AnimTexturesError`](#api-error-handling).
 
@@ -182,9 +206,9 @@ Sets the framerate you want your static shape's texture animation to have, if va
 
 ##
 
-#### <a name="api-set-anim-texture-prefix">`StaticShape::setAnimTexturePrefix(namePrefix)`
+#### <a name="api-set-anim-texture-prefix">`ShapeBase::setAnimTexturePrefix(namePrefix)`
 
-Sets the name prefix you want your static shape's texture animation to have.
+Sets the name prefix you want your shape's texture animation to have.
 
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
@@ -199,8 +223,10 @@ Some functions return an `AnimTexturesError`, which will be one of the following
 | Variable | Description |
 | -------- | ----------- |
 | $AnimTextures::Error::None | There was no error and the operation was successful. |
-| $AnimTextures::Error::ShapeLimit | The limit for static shapes with animated textures has been reached. |
-| $AnimTextures::Error::NotInSet | The static shape you're trying to animate has not been added to the shape set. Either create a new static shape with `AnimTextures.createShape()` or add your shape to the set with `AnimTextures.addShape()`. |
+| $AnimTextures::Error::ClassName | The class name specified does not support texture skins. |
+| $AnimTextures::Error::DataBlock | The data block specified does not exist. |
+| $AnimTextures::Error::ShapeLimit | The limit for shapes with animated textures has been reached. |
+| $AnimTextures::Error::NotInSet | The shape you're trying to animate has not been added to the shape set. Either create a new shape with `AnimTextures.createShape()` or add your shape to the set with `AnimTextures.addShape()`. |
 | $AnimTextures::Error::MinFrames | The number of frames specified is too low. |
 | $AnimTextures::Error::MaxFrames | The number of frames specified is too high. |
 | $AnimTextures::Error::MinFPS | The framerate specified is too low. |
