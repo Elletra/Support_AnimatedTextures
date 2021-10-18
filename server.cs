@@ -136,7 +136,7 @@ package Support_AnimatedTextures
 			return false;
 		}
 
-		%this.animTextureLoop ();
+		%this._animTextureLoop ();
 
 		return true;
 	}
@@ -146,7 +146,8 @@ package Support_AnimatedTextures
 		cancel (%this.anim_loop);
 	}
 
-	function StaticShape::animTextureLoop ( %this )
+	// Internal use only -- Do NOT call this.
+	function StaticShape::_animTextureLoop ( %this )
 	{
 		cancel (%this.anim_loop);
 
@@ -173,7 +174,7 @@ package Support_AnimatedTextures
 			%this.anim_currFrame = 0;
 		}
 
-		%this.anim_loop = %this.schedule (1000 / %this.anim_fps, "animTextureLoop");
+		%this.anim_loop = %this.schedule (1000 / %this.anim_fps, "_animTextureLoop");
 	}
 
 	function createMission ()
