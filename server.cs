@@ -10,9 +10,14 @@ function AnimTextures::onRemove ( %this )
 	%this._animTexShapes.delete ();
 }
 
-function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps )
+function AnimTextures::createShape ( %this, %className, %data, %namePrefix, %numFrames, %fps )
 {
-	%error = %this.checkCanCreateShape (%numFrames, %fps);
+	if ( %className $= "" )
+	{
+		%className = StaticShape;
+	}
+
+	%error = %this.checkCanCreateShape (%className, %data, %numFrames, %fps);
 
 	if ( %error != $AnimTextures::Error::None )
 	{
@@ -20,7 +25,7 @@ function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps
 		return 0;
 	}
 
-	%shape = new StaticShape ()
+	%shape = new (%className) ()
 	{
 		dataBlock = %data;
 		anim_currFrame = 0;
@@ -49,7 +54,7 @@ function AnimTextures::addShape ( %this, %shape )
 {
 	if ( !%this.hasShape (%shape) )
 	{
-		%error = %this.checkCanCreateShape (%shape.anim_numFrames, %shape.anim_fps);
+		%error = %this.checkCanAddShape (%shape.getClassName (), %shape.anim_numFrames, %shape.anim_fps);
 
 		if ( %error != $AnimTextures::Error::None )
 		{
@@ -106,8 +111,25 @@ function AnimTextures::validateFPS ( %this, %fps )
 	return $AnimTextures::Error::None;
 }
 
-function AnimTextures::checkCanCreateShape ( %this, %numFrames, %fps )
+function AnimTextures::checkCanCreateShape ( %this, %className, %data, %numFrames, %fps )
 {
+	%error = %this.checkCanAddShape (%className, %numFrames, %fps);
+
+	if ( %error != $AnimTextures::Error::None && !isObject (%data) )
+	{
+		return $AnimTextures::Error::DataBlock;
+	}
+
+	return %error;
+}
+
+function AnimTextures::checkCanAddShape ( %this, %className, %numFrames, %fps )
+{
+	if ( !isFunction (%className, "setSkinName") )
+	{
+		return $AnimTextures::Error::ClassName;
+	}
+
 	if ( %this._animTexShapes.getCount () >= $AnimTextures::MaxShapes )
 	{
 		return $AnimTextures::Error::ShapeLimit;
@@ -127,6 +149,12 @@ function AnimTextures::printError ( %this, %error )
 {
 	switch ( %error )
 	{
+		case $AnimTextures::Error::ClassName:
+			error ("ERROR: The class name specified does not support texture skins");
+
+		case $AnimTextures::Error::DataBlock:
+			error ("ERROR: The data block specified does not exist");
+
 		case $AnimTextures::Error::ShapeLimit:
 			error ("ERROR: Animated texture shape limit reached");
 
@@ -167,13 +195,17 @@ package Support_AnimatedTextures
 		$AnimTextures::MaxFPS = 1000;
 		$AnimTextures::DefaultFPS = 30;
 
-		$AnimTextures::Error::None = 0;
-		$AnimTextures::Error::ShapeLimit = 1;
-		$AnimTextures::Error::NotInSet = 2;
-		$AnimTextures::Error::MinFrames = 3;
-		$AnimTextures::Error::MaxFrames = 4;
-		$AnimTextures::Error::MinFPS = 5;
-		$AnimTextures::Error::MaxFPS = 6;
+		%error = -1;
+
+		$AnimTextures::Error::None = %error++;
+		$AnimTextures::Error::ClassName = %error++;
+		$AnimTextures::Error::DataBlock = %error++;
+		$AnimTextures::Error::ShapeLimit = %error++;
+		$AnimTextures::Error::NotInSet = %error++;
+		$AnimTextures::Error::MinFrames = %error++;
+		$AnimTextures::Error::MaxFrames = %error++;
+		$AnimTextures::Error::MinFPS = %error++;
+		$AnimTextures::Error::MaxFPS = %error++;
 
 		if ( !isObject (AnimTextures) )
 		{
@@ -181,7 +213,7 @@ package Support_AnimatedTextures
 		}
 	}
 
-	function StaticShape::startTextureAnim ( %this )
+	function ShapeBase::startTextureAnim ( %this )
 	{
 		%error = %this.checkCanAnimTexture ();
 
@@ -195,12 +227,12 @@ package Support_AnimatedTextures
 		return $AnimTextures::Error::None;
 	}
 
-	function StaticShape::stopTextureAnim ( %this )
+	function ShapeBase::stopTextureAnim ( %this )
 	{
 		cancel (%this.anim_loop);
 	}
 
-	function StaticShape::setAnimTextureFrames ( %this, %numFrames )
+	function ShapeBase::setAnimTextureFrames ( %this, %numFrames )
 	{
 		%error = AnimTextures.validateNumFrames (%numFrames);
 
@@ -212,7 +244,7 @@ package Support_AnimatedTextures
 		return %error;
 	}
 
-	function StaticShape::setAnimTextureFPS ( %this, %fps )
+	function ShapeBase::setAnimTextureFPS ( %this, %fps )
 	{
 		%error = AnimTextures.validateFPS (%fps);
 
@@ -224,12 +256,12 @@ package Support_AnimatedTextures
 		return %error;
 	}
 
-	function StaticShape::setAnimTexturePrefix ( %this, %namePrefix )
+	function ShapeBase::setAnimTexturePrefix ( %this, %namePrefix )
 	{
 		%this.anim_namePrefix = %namePrefix;
 	}
 
-	function StaticShape::checkCanAnimTexture ( %this )
+	function ShapeBase::checkCanAnimTexture ( %this )
 	{
 		%error = AnimTextures.validateNumFrames (%this.anim_numFrames);
 
@@ -247,7 +279,7 @@ package Support_AnimatedTextures
 	}
 
 	// Internal use only -- Do NOT call this!
-	function StaticShape::_animTextureLoop ( %this )
+	function ShapeBase::_animTextureLoop ( %this )
 	{
 		cancel (%this.anim_loop);
 
