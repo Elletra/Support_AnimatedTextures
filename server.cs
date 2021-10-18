@@ -81,6 +81,16 @@ function AnimTextures::hasShape ( %this, %shape )
 	return %this._animTexShapes.isMember (%shape);
 }
 
+function AnimTextures::getShapeCount ( %this )
+{
+	return %this._animTexShapes.getCount ();
+}
+
+function AnimTextures::getShape ( %this, %index )
+{
+	return %this._animTexShapes.getObject (%index);
+}
+
 function AnimTextures::validateNumFrames ( %this, %numFrames )
 {
 	if ( %numFrames $= "" || %numFrames < $AnimTextures::MinFrames )
