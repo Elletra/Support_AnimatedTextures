@@ -36,7 +36,7 @@ function AnimTextures::createShape ( %this, %className, %data, %namePrefix, %num
 	AnimTextures._animTexShapes.add (%shape);
 
 	%shape.anim_numFrames = %numFrames;
-	%shape.anim_fps = (%fps $= "" ? $AnimTextures::DefaultFPS : %fps); 
+	%shape.anim_fps = %fps;
 
 	%error = %shape.startTextureAnim ();
 
@@ -206,7 +206,6 @@ package Support_AnimatedTextures
 		$AnimTextures::MaxFrames = 1000;
 		$AnimTextures::MinFPS = 1;
 		$AnimTextures::MaxFPS = 1000;
-		$AnimTextures::DefaultFPS = 30;
 
 		%error = -1;
 
