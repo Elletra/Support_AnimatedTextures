@@ -109,7 +109,7 @@ package Support_AnimatedTextures
 
 		$AnimTextures::MaxShapes = 100;
 		$AnimTextures::MinFrames = 2;
-		$AnimTextures::MaxFrames = 100;
+		$AnimTextures::MaxFrames = 1000;
 		$AnimTextures::DefaultFPS = 30;
 
 		$AnimTextures::Error::None = 0;
@@ -160,6 +160,11 @@ package Support_AnimatedTextures
 		}
 
 		%frame = %this.anim_currFrame;
+
+		if ( %frame < 100 )
+		{
+			%frame = "0" @ %frame;
+		}
 
 		if ( %frame < 10 )
 		{
