@@ -12,7 +12,7 @@ function AnimTextures::onRemove ( %this )
 
 function AnimTextures::createShape ( %this, %data, %namePrefix, %numFrames, %fps )
 {
-	%error = %this.checkCanCreateShape (%numFrames);
+	%error = %this.checkCanCreateShape (%numFrames, %fps);
 
 	if ( %error != $AnimTextures::Error::None )
 	{
@@ -49,7 +49,7 @@ function AnimTextures::addShape ( %this, %shape )
 {
 	if ( !%this.hasShape (%shape) )
 	{
-		%error = %this.checkCanCreateShape (%shape.anim_numFrames);
+		%error = %this.checkCanCreateShape (%shape.anim_numFrames, %shape.anim_fps);
 
 		if ( %error != $AnimTextures::Error::None )
 		{
@@ -91,14 +91,36 @@ function AnimTextures::validateNumFrames ( %this, %numFrames )
 	return $AnimTextures::Error::None;
 }
 
-function AnimTextures::checkCanCreateShape ( %this, %numFrames )
+function AnimTextures::validateFramerate ( %this, %fps )
+{
+	if ( %fps $= "" || %fps < $AnimTextures::MinFPS )
+	{
+		return $AnimTextures::Error::MinFPS;
+	}
+
+	if ( %fps > $AnimTextures::MaxFPS )
+	{
+		return $AnimTextures::Error::MaxFPS;
+	}
+
+	return $AnimTextures::Error::None;
+}
+
+function AnimTextures::checkCanCreateShape ( %this, %numFrames, %fps )
 {
 	if ( %this._animTexShapes.getCount () >= $AnimTextures::MaxShapes )
 	{
 		return $AnimTextures::Error::ShapeLimit;
 	}
 
-	return %this.validateNumFrames (%numFrames);
+	%error = %this.validateNumFrames (%numFrames);
+
+	if ( %error != $AnimTextures::Error::None )
+	{
+		return %error;
+	}
+
+	return %this.validateFramerate (%fps);
 }
 
 function AnimTextures::printError ( %this, %error )
@@ -108,14 +130,20 @@ function AnimTextures::printError ( %this, %error )
 		case $AnimTextures::Error::ShapeLimit:
 			error ("ERROR: Animated texture shape limit reached");
 
+		case $AnimTextures::Error::NotInSet:
+			error ("ERROR: Shape is not in animated texture set");
+
 		case $AnimTextures::Error::MinFrames:
 			error ("ERROR: Animated textures must have at least " @ $AnimTextures::MinFrames @ " frame(s)");
 
 		case $AnimTextures::Error::MaxFrames:
 			error ("ERROR: Animated textures cannot have more than " @ $AnimTextures::MaxFrames @ " frame(s)");
 
-		case $AnimTextures::Error::NotInSet:
-			error ("ERROR: Shape is not in animated texture set");
+		case $AnimTextures::Error::MinFPS:
+			error ("ERROR: Animated textures must have a framerate of at least " @ $AnimTextures::MinFPS);
+
+		case $AnimTextures::Error::MaxFPS:
+			error ("ERROR: Animated textures cannot have a higher framerate than " @ $AnimTextures::MaxFPS);
 	}
 }
 
@@ -135,13 +163,17 @@ package Support_AnimatedTextures
 		$AnimTextures::MaxShapes = 100;
 		$AnimTextures::MinFrames = 2;
 		$AnimTextures::MaxFrames = 1000;
+		$AnimTextures::MinFPS = 1;
+		$AnimTextures::MaxFPS = 1000;
 		$AnimTextures::DefaultFPS = 30;
 
 		$AnimTextures::Error::None = 0;
 		$AnimTextures::Error::ShapeLimit = 1;
-		$AnimTextures::Error::MinFrames = 2;
-		$AnimTextures::Error::MaxFrames = 3;
-		$AnimTextures::Error::NotInSet = 4;
+		$AnimTextures::Error::NotInSet = 2;
+		$AnimTextures::Error::MinFrames = 3;
+		$AnimTextures::Error::MaxFrames = 4;
+		$AnimTextures::Error::MinFPS = 5;
+		$AnimTextures::Error::MaxFPS = 6;
 
 		if ( !isObject (AnimTextures) )
 		{
