@@ -77,6 +77,11 @@ function AnimTextures::removeShape ( %this, %shape )
 	}
 }
 
+function AnimTextures::deleteAllShapes ( %this )
+{
+	%this._animTexShapes.deleteAll ();
+}
+
 function AnimTextures::hasShape ( %this, %shape )
 {
 	return %this._animTexShapes.isMember (%shape);
