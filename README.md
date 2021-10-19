@@ -87,7 +87,7 @@ Checks whether a shape is in the shape set.
 
 | Argument | Type | Description |
 | -------- | ---- | ----------- |
-| shape | `ShapeBase` | The shape to add to the shape set |
+| shape | `ShapeBase` | The shape to check |
 
 ##
 
