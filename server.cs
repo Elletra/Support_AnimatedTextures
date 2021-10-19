@@ -202,7 +202,7 @@ package Support_AnimatedTextures
 
 		$AnimTextures::Version = 1;
 
-		$AnimTextures::MaxShapes = 200;
+		$AnimTextures::MaxShapes = 150;
 		$AnimTextures::MinFrames = 1;
 		$AnimTextures::MaxFrames = 1000;
 		$AnimTextures::MinFPS = 1;

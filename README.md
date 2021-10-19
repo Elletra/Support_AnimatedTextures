@@ -273,7 +273,7 @@ There are some constants available for this add-on. You may use them, but ***do 
 | Variable | Value | Description |
 | -------- | ----- | ----------- |
 | $AnimTextures::Version | 1 | The version of the add-on that is installed. |
-| $AnimTextures::MaxShapes | 200 | The maximum number of shapes with animated textures that are allowed. After about 200, things start to glitch out. |
+| $AnimTextures::MaxShapes | 150 | The maximum number of shapes with animated textures that are allowed. After about 150, things start to glitch out and get laggy. |
 | $AnimTextures::MinFrames | 1 | The minimum number of frames an animation can have. |
 | $AnimTextures::MaxFrames | 1000 | The maximum number of frames an animation can have. |
 | $AnimTextures::MinFPS | 1 | The lowest framerate an animation can have. |
