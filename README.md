@@ -1,6 +1,8 @@
 # Animated Textures #
 
-This add-on adds support for animated textures.
+Adds support for animated textures.
+
+This is done using schedules, so don't expect it to be performant—use sparingly.
 
 
 ## Using `Support_AnimatedTextures` ##
